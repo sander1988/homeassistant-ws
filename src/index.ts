@@ -27,8 +27,9 @@ type HassCommandArgs = {
     | 'get_states'
     | 'get_services'
     | 'get_panels'
-    | 'get_config'
+    | 'get_config'    
     | 'config/area_registry/list'
+    | 'config/entity_registry/get',
     | 'media_player_thumbnail'
     | 'camera_thumbnail';
 
@@ -44,8 +45,8 @@ export type HassApi = {
   getServices: () => Promise<any[]>;
   getPanels: () => Promise<any[]>;
   getConfig: () => Promise<{}>;
-  getAreas: () => Promise<{}>;
-
+  getAreas: () => Promise<[]>;
+  getEntity: (entityId: string) => Promise<{}>;
   getMediaPlayerThumbnail: (entityId: string) => Promise<{}>;
   getCameraThumbnail: (entityId: string) => Promise<{}>;
 
@@ -156,6 +157,16 @@ const clientObject = (client: HassClient): HassApi => {
           domain,
           service,
           service_data: additionalArgs,
+        },
+        client
+      );
+    },
+    
+    async getEntity(entityId) {
+      return command(
+        {
+          type: 'config/entity_registry/get',
+          entity_id: entityId,
         },
         client
       );
