@@ -28,6 +28,7 @@ type HassCommandArgs = {
     | 'get_services'
     | 'get_panels'
     | 'get_config'
+    | 'get_areas'
     | 'media_player_thumbnail'
     | 'camera_thumbnail';
 
@@ -141,6 +142,7 @@ const clientObject = (client: HassClient): HassApi => {
     getServices: async () => command({ type: 'get_services' }, client),
     getPanels: async () => command({ type: 'get_panels' }, client),
     getConfig: async () => command({ type: 'get_config' }, client),
+    getAreas: async () => command({ type: 'config/area_registry/list' }, client),
 
     on: (eventId: EventType, cb: EventListener): void => {
       client.emitter.on(eventId, cb);
