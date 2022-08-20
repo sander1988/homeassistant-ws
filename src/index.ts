@@ -44,6 +44,7 @@ export type HassApi = {
   getServices: () => Promise<any[]>;
   getPanels: () => Promise<any[]>;
   getConfig: () => Promise<{}>;
+  getAreas: () => Promise<{}>;
 
   getMediaPlayerThumbnail: (entityId: string) => Promise<{}>;
   getCameraThumbnail: (entityId: string) => Promise<{}>;
