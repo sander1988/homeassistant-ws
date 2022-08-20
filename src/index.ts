@@ -28,7 +28,7 @@ type HassCommandArgs = {
     | 'get_services'
     | 'get_panels'
     | 'get_config'
-    | 'get_areas'
+    | 'config/area_registry/list'
     | 'media_player_thumbnail'
     | 'camera_thumbnail';
 
