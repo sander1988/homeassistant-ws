@@ -30,7 +30,7 @@ type HassCommandArgs = {
     | 'get_config'    
     | 'config/area_registry/list'
     | 'config/entity_registry/get',
-    | 'media_player_thumbnail'
+    | 'media_player_thumbnail',
     | 'camera_thumbnail';
 
   [additionalArg: string]: any;
