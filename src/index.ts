@@ -27,12 +27,13 @@ type HassCommandArgs = {
     | 'get_states'
     | 'get_services'
     | 'get_panels'
-    | 'get_config'    
+    | 'get_config'
     | 'config/area_registry/list'
     | 'config/device_registry/list'
     | 'config/entity_registry/get'
     | 'media_player_thumbnail'
-    | 'camera_thumbnail';
+    | 'camera_thumbnail'
+    | 'camera/stream';
 
   [additionalArg: string]: any;
 };
@@ -51,6 +52,7 @@ export type HassApi = {
   getEntity: (entityId: string) => Promise<{}>;
   getMediaPlayerThumbnail: (entityId: string) => Promise<{}>;
   getCameraThumbnail: (entityId: string) => Promise<{}>;
+  getCameraStream: (entityId: string, format: string) => Promise<{}>;
 
   on: (eventType: EventType, cb: EventListener) => void;
 
@@ -193,6 +195,17 @@ const clientObject = (client: HassClient): HassApi => {
         },
         client
       ).then(binaryResultTransform);
+    },
+    
+    async getCameraStream(entityId, format='hls') {
+      return command(
+        {
+          type: 'camera/stream',
+          entity_id: entityId,
+          format: format,
+        },
+        client
+      );
     },
   };
 };
