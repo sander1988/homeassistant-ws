@@ -35,7 +35,7 @@ type HassCommandArgs = {
     | 'media_player_thumbnail'
     | 'camera_thumbnail'
     | 'camera/stream'
-    | 'logbook/event_stream';
+    | 'logbook/get_events';
 
   [additionalArg: string]: any;
 };
@@ -56,7 +56,7 @@ export type HassApi = {
   getMediaPlayerThumbnail: (entityId: string) => Promise<{}>;
   getCameraThumbnail: (entityId: string) => Promise<{}>;
   getCameraStream: (entityId: string, format: string) => Promise<{}>;
-  getLogEventStream: (startTime: string, endTime?: string, entityIds?: string[], deviceIds?: string[]) => Promise<{}>;
+  getLogbookEvents: (startTime: string, endTime?: string, entityIds?: string[], deviceIds?: string[]) => Promise<{}>;
 
   on: (eventType: EventType, cb: EventListener) => void;
 
@@ -213,7 +213,7 @@ const clientObject = (client: HassClient): HassApi => {
       );
     },
     
-    async getLogEventStream(startTime, endTime, entityIds, deviceIds) {
+    async getLogbookEvents(startTime, endTime, entityIds, deviceIds) {
       return command(
         {
           type: 'logbook/event_stream',
