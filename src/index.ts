@@ -216,7 +216,7 @@ const clientObject = (client: HassClient): HassApi => {
     async getLogbookEvents(startTime, endTime, entityIds, deviceIds) {
       return command(
         {
-          type: 'logbook/event_stream',
+          type: 'logbook/get_events',
           start_time: startTime,
           end_time: endTime,
           entityIds: entityIds,
