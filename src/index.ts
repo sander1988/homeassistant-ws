@@ -214,26 +214,15 @@ const clientObject = (client: HassClient): HassApi => {
     },
     
     async getLogEventStream(entityId, startTime, endTime, entityIds, deviceIds) {
-      let commandArgs = {
-        type: 'logbook/event_stream',
-        entity_id: entityId,
-        start_time: startTime,
-      }
-      
-      if(endTime) {
-        commandArgs['end_time'] = endTime;
-      }
-      
-      if(entityIds) {
-        commandArgs['entity_ids'] = entityIds;
-      }
-      
-      if(deviceIds) {
-        commandArgs['device_ids'] = deviceIds;
-      }
-      
       return command(
-        commandArgs,
+        {
+          type: 'logbook/event_stream',
+          entity_id: entityId,
+          start_time: startTime,
+          end_time: endTime,
+          entityIds: entityIds,
+          deviceIds: deviceIds,
+        },
         client
       );
     },
