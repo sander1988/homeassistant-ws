@@ -60,7 +60,7 @@ export type HassApi = {
   getCameraStream: (entityId: string, format: string) => Promise<{}>;
   getLogbookEvents: (startTime: string, endTime?: string, entityIds?: string[], deviceIds?: string[]) => Promise<{}>;
   getEntityHistory: (startTime: string, endTime?: string, entityIds?: string[], includeStartTimeState?: boolean, significantChangesOnly?: boolean, minimalResponse?: boolean, noAttributes?: boolean) => Promise<{}>;
-  getEntityStatistics: (startTime: string, endTime?: string, statisticIds?: string[], period: '5minute'|'hour'|'day'|'month') => Promise<{}>;
+  getEntityStatistics: (period: '5minute'|'hour'|'day'|'month', startTime: string, endTime?: string, statisticIds?: string[]) => Promise<{}>;
 
   on: (eventType: EventType, cb: EventListener) => void;
 
@@ -246,7 +246,7 @@ const clientObject = (client: HassClient): HassApi => {
       );
     },
       
-    async getEntityStatistics(startTime, endTime, statisticIds, period) {
+    async getEntityStatistics(period, startTime, endTime, statisticIds) {
       return command(
         {
           type: 'history/statistics_during_period',
