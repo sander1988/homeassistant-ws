@@ -221,8 +221,8 @@ const clientObject = (client: HassClient): HassApi => {
           type: 'logbook/get_events',
           start_time: startTime,
           end_time: endTime,
-          entityIds: entityIds,
-          deviceIds: deviceIds,
+          entity_ids: entityIds,
+          device_ids: deviceIds,
         },
         client
       );
@@ -234,7 +234,7 @@ const clientObject = (client: HassClient): HassApi => {
           type: 'history/history_during_period',
           start_time: startTime,
           end_time: endTime,
-          entityIds: entityIds,
+          entity_ids: entityIds,
           include_start_time_state: includeStartTimeState,
           significant_changes_only: significantChangesOnly,
           minimal_response: minimalResponse,
