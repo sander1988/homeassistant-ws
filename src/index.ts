@@ -35,7 +35,8 @@ type HassCommandArgs = {
     | 'media_player_thumbnail'
     | 'camera_thumbnail'
     | 'camera/stream'
-    | 'logbook/get_events';
+    | 'logbook/get_events'
+    | 'history/history_during_period';
 
   [additionalArg: string]: any;
 };
@@ -57,6 +58,7 @@ export type HassApi = {
   getCameraThumbnail: (entityId: string) => Promise<{}>;
   getCameraStream: (entityId: string, format: string) => Promise<{}>;
   getLogbookEvents: (startTime: string, endTime?: string, entityIds?: string[], deviceIds?: string[]) => Promise<{}>;
+  getEntityHistory: (startTime: string, endTime?: string, entityIds?: string[], includeStartTimeState?: boolean, significantChangesOnly?: boolean, minimalResponse?: boolean, noAttributes?: boolean) => Promise<{}>;
 
   on: (eventType: EventType, cb: EventListener) => void;
 
@@ -225,6 +227,22 @@ const clientObject = (client: HassClient): HassApi => {
         client
       );
     },
+    
+    async getEntityHistory(startTime, endTime, entityIds, includeStartTimeState=true, significantChangesOnly=true, minimalResponse=false, noAttributes=false) {
+      return command(
+        {
+          type: 'history/history_during_period',
+          start_time: startTime,
+          end_time: endTime,
+          entityIds: entityIds,
+          include_start_time_state: includeStartTimeState,
+          significant_changes_only: significantChangesOnly,
+          minimal_response: minimalResponse,
+          no_attributes: noAttributes,
+        },
+        client
+      );
+    },    
   };
 };
 
