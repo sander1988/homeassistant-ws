@@ -33,6 +33,7 @@ type HassCommandArgs = {
     | 'config/entity_registry/list'
     | 'config/entity_registry/get'
     | 'media_player_thumbnail'
+    | 'auth/sign_path'
     | 'camera_thumbnail'
     | 'camera/stream'
     | 'logbook/get_events'
@@ -56,6 +57,7 @@ export type HassApi = {
   getEntities: () => Promise<[]>;
   getEntity: (entityId: string) => Promise<{}>;
   getMediaPlayerThumbnail: (entityId: string) => Promise<{}>;
+  signPath: (path: string) => Promise<{}>;
   getCameraThumbnail: (entityId: string) => Promise<{}>;
   getCameraStream: (entityId: string, format: string) => Promise<{}>;
   getLogbookEvents: (startTime: string, endTime?: string, entityIds?: string[], deviceIds?: string[]) => Promise<{}>;
@@ -194,6 +196,16 @@ const clientObject = (client: HassClient): HassApi => {
         },
         client
       ).then(binaryResultTransform);
+    },
+    
+    async signPath(path) {
+      return command(
+        {
+          type: 'auth/sign_path',
+          path: path,
+        },
+        client
+      );
     },
 
     async getCameraThumbnail(entityId) {
