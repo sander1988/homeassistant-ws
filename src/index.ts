@@ -57,7 +57,7 @@ export type HassApi = {
   getEntities: () => Promise<[]>;
   getEntity: (entityId: string) => Promise<{}>;
   getMediaPlayerThumbnail: (entityId: string) => Promise<{}>;
-  signPath: (path: string) => Promise<{}>;
+  signPath: (path: string, expires?: int) => Promise<{}>;
   getCameraThumbnail: (entityId: string) => Promise<{}>;
   getCameraStream: (entityId: string, format: string) => Promise<{}>;
   getLogbookEvents: (startTime: string, endTime?: string, entityIds?: string[], deviceIds?: string[]) => Promise<{}>;
@@ -198,11 +198,12 @@ const clientObject = (client: HassClient): HassApi => {
       ).then(binaryResultTransform);
     },
     
-    async signPath(path) {
+    async signPath(path, expires=30) {
       return command(
         {
           type: 'auth/sign_path',
           path: path,
+          expires: expires,
         },
         client
       );
