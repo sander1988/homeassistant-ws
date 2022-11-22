@@ -276,7 +276,7 @@ const clientObject = (client: HassClient): HassApi => {
 
 export async function connectAndAuthorize(
   client: HassClient
-): Promise<HassApi> => {
+): Promise<HassApi> {
   return new Promise((resolve, reject) => {
     client.ws.onmessage = messageHandler(client);
 
@@ -318,7 +318,7 @@ export async function connectAndAuthorize(
       );
     });
   });
-};
+}
 
 export default function createClient(
   callerOptions: Partial<HassWsOptions> = {}
