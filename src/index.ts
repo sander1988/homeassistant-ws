@@ -275,8 +275,7 @@ const clientObject = (client: HassClient): HassApi => {
 };
 
 const connectAndAuthorize = async (
-  client: HassClient,
-  resolveWith: HassApi
+  client: HassClient
 ): Promise<HassApi> => {
   return new Promise((resolve, reject) => {
     client.ws.onmessage = messageHandler(client);
@@ -294,7 +293,7 @@ const connectAndAuthorize = async (
     client.emitter.on('auth_ok', () => {
       // Immediately subscribe to all events, and return the client handle:
       command({ type: 'subscribe_events' }, client)
-        .then(() => resolve(resolveWith))
+        .then(() => resolve(clientObject(client)))
         .catch((err) => reject(err));
     });
 
@@ -323,7 +322,7 @@ const connectAndAuthorize = async (
 
 export default async function createClient(
   callerOptions: Partial<HassWsOptions> = {}
-): Promise<HassApi> {
+): HassClient {
   const options = {
     ...defaultOptions,
     ...callerOptions,
@@ -337,5 +336,5 @@ export default async function createClient(
     ws: options.ws(options),
   };
 
-  return connectAndAuthorize(client, clientObject(client));
+  return client
 }
