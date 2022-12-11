@@ -24,6 +24,7 @@ type HassCommandArgs = {
   type:
     | 'call_service'
     | 'subscribe_events'
+    | 'ping'
     | 'get_states'
     | 'get_services'
     | 'get_panels'
@@ -48,6 +49,7 @@ export type EventType = string | symbol;
 
 export type HassApi = {
   rawClient: HassClient;
+  ping: () => Promise<[]>;
   getStates: () => Promise<any[]>;
   getServices: () => Promise<any[]>;
   getPanels: () => Promise<any[]>;
@@ -154,6 +156,7 @@ const clientObject = (client: HassClient): HassApi => {
   return {
     rawClient: client,
 
+    ping: async () => command({ type: 'ping' }, client), 
     getStates: async () => command({ type: 'get_states' }, client),
     getServices: async () => command({ type: 'get_services' }, client),
     getPanels: async () => command({ type: 'get_panels' }, client),
