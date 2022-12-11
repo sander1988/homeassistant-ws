@@ -101,7 +101,7 @@ const command = async (
     const id = client.seq;
 
     client.resultMap[id] = (resultMessage: any) => {
-      if (resultMessage.success) resolve(resultMessage.result);
+      if (resultMessage.type === 'pong' || resultMessage.success) resolve(resultMessage.result);
       else reject(new Error(resultMessage.error.message));
 
       // We won't need this callback again once we use it:
