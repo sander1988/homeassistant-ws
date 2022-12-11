@@ -144,7 +144,7 @@ const messageHandler = (client: HassClient) => {
 
     // If this is a result message, match it with the results map on the client
     // and call the matching function:
-    if (message.id && message.type === 'result') {
+    if (message.id && (message.type === 'result' || message.type === 'pong')) {
       if (typeof client.resultMap[message.id] !== 'undefined') {
         client.resultMap[message.id](message);
       }
