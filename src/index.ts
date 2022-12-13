@@ -7,6 +7,7 @@ export type HassWsOptions = {
   port: number;
   path: string;
   token: string;
+  commandTimeout: number;
   messageSerializer: (outgoingMessage: any) => string;
   messageParser: (incomingMessage: MessageEvent) => any;
   ws: (opts: HassWsOptions) => WebSocket;
@@ -16,6 +17,7 @@ type HassClient = {
   seq: number;
   options: HassWsOptions;
   resultMap: { [resultId: number]: any };
+  timeoutMap: { [resultId: number]: any };
   emitter: EventEmitter;
   ws: WebSocket;
 };
@@ -80,6 +82,7 @@ const defaultOptions: Partial<HassWsOptions> = {
   host: 'localhost',
   port: 8123,
   path: '/api/websocket',
+  commandTimeout: 30,
 
   messageSerializer: (outgoingMessage: any) => JSON.stringify(outgoingMessage),
   messageParser: (incomingMessage: { data: string }) =>
@@ -95,18 +98,39 @@ const defaultOptions: Partial<HassWsOptions> = {
 
 const command = async (
   commandArgs: HassCommandArgs,
-  client: HassClient
+  client: HassClient,
+  commandTimeout: number=-1
 ): Promise<any> => {
   return new Promise((resolve, reject) => {
     const id = client.seq;
 
     client.resultMap[id] = (resultMessage: any) => {
+      // Clear the pending timeout timer as we have response:
+      if (id in client.timeoutMap) {
+        clearTimeout(client.timeoutMap[id]);
+        delete client.timeoutMap[id];
+      }
+
       if (resultMessage.type === 'pong' || resultMessage.success) resolve(resultMessage.result);
       else reject(new Error(resultMessage.error.message));
 
       // We won't need this callback again once we use it:
       delete client.resultMap[id];
     };
+
+    // Set the optional command timeout timer:
+    if (commandTimeout < 0) {
+      commandTimeout = client.options.commandTimeout;
+    }
+    if (commandTimeout > 0) {
+      client.timeoutMap[id] = setTimeout(() => {
+        client.resultMap[id]({
+          'error': {
+            'message': 'Command timeout out',
+          }
+        });
+      }, commandTimeout * 1000);
+    }
 
     client.ws.send(
       client.options.messageSerializer({
@@ -156,7 +180,7 @@ const clientObject = (client: HassClient): HassApi => {
   return {
     rawClient: client,
 
-    ping: async () => command({ type: 'ping' }, client), 
+    ping: async () => command({ type: 'ping' }, client, 5),
     getStates: async () => command({ type: 'get_states' }, client),
     getServices: async () => command({ type: 'get_services' }, client),
     getPanels: async () => command({ type: 'get_panels' }, client),
@@ -289,9 +313,19 @@ export async function connectAndAuthorize(
       reject(err);
     };
 
-    // Pass-through onclose events to the client:
-    client.ws.onclose = (event: CloseEvent) =>
+    client.ws.onclose = (event: CloseEvent) => {
+      // Reject all pending requests:
+      for (let id in client.resultMap) {
+        client.resultMap[id]({
+          'error': {
+            'message': 'Connection closed',
+          }
+        });
+      }
+
+      // Pass-through onclose events to the client:
       client.emitter.emit('ws_close', event);
+    };
 
     client.emitter.on('auth_ok', () => {
       // Immediately subscribe to all events, and return the client handle:
