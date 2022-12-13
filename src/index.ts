@@ -369,6 +369,7 @@ export default function createClient(
     seq: 1,
     options,
     resultMap: {},
+    timeoutMap: {},
     emitter: new (EventEmitter as any)(),
     ws: options.ws(options),
   };
