@@ -41,7 +41,7 @@ type HassCommandArgs = {
     | 'camera/stream'
     | 'logbook/get_events'
     | 'history/history_during_period'
-    | 'history/statistics_during_period';
+    | 'recorder/statistics_during_period';
 
   [additionalArg: string]: any;
 };
@@ -289,7 +289,7 @@ const clientObject = (client: HassClient): HassApi => {
     async getEntityStatistics(period, startTime, endTime, statisticIds) {
       return command(
         {
-          type: 'history/statistics_during_period',
+          type: 'recorder/statistics_during_period',
           start_time: startTime,
           end_time: endTime,
           statistic_ids: statisticIds,
