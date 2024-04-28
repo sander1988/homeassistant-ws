@@ -31,6 +31,7 @@ type HassCommandArgs = {
     | 'get_services'
     | 'get_panels'
     | 'get_config'
+    | 'config/floor_registry/list'
     | 'config/area_registry/list'
     | 'config/device_registry/list'
     | 'config/entity_registry/list'
@@ -56,6 +57,7 @@ export type HassApi = {
   getServices: () => Promise<any[]>;
   getPanels: () => Promise<any[]>;
   getConfig: () => Promise<{}>;
+  getFloors: () => Promise<[]>;
   getAreas: () => Promise<[]>;
   getDevices: () => Promise<[]>;
   getEntities: () => Promise<[]>;
@@ -185,6 +187,7 @@ const clientObject = (client: HassClient): HassApi => {
     getServices: async () => command({ type: 'get_services' }, client),
     getPanels: async () => command({ type: 'get_panels' }, client),
     getConfig: async () => command({ type: 'get_config' }, client),
+    getFloors: async () => command({ type: 'config/floor_registry/list' }, client),
     getAreas: async () => command({ type: 'config/area_registry/list' }, client),
     getDevices: async () => command({ type: 'config/device_registry/list' }, client),
     getEntities: async () => command({ type: 'config/entity_registry/list' }, client),
